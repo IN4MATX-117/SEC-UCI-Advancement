@@ -1,0 +1,19 @@
+name: Assign Reviewer
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened]
+
+jobs:
+  assign-reviewer:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Assign random reviewer
+      uses: kentaro-m/auto-assign-action@v1.2.0
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        number-of-reviewers: 1
+        skip-keywords: "[WIP]"
