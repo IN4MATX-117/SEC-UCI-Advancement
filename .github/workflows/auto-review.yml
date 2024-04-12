@@ -1,19 +1,14 @@
-name: Assign Reviewer
-
+name: "Assign Random Reviewer"
 on:
-  pull_request:
-    branches: [main]
-    types: [opened, reopened]
+  pull_request_target:
+    types: [opened, ready_for_review, reopened]
 
 jobs:
-  assign-reviewer:
+  assign_reviewer:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Assign random reviewer
-      uses: kentaro-m/auto-assign-action@v1.2.0
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        number-of-reviewers: 1
-        skip-keywords: "[WIP]"
+      - uses: actions/checkout@v3
+      - uses: uesteibar/reviewer-lottery@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
