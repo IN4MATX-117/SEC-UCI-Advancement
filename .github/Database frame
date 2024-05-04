@@ -23,3 +23,10 @@ CREATE TABLE IF NOT EXISTS Filings (
     TransactionType CHAR(1) NULL,  -- Can be 'A' or 'D' for Acquisition or Disposition, or NULL if not applicable
     FOREIGN KEY (CIK) REFERENCES Persons(CIK)
 );
+INSERT INTO Persons (CIK, Name, Company, StockTicker)
+VALUES (1371128, 'Join', 'NewHydrogen, Inc.', 'NEWH')
+ON DUPLICATE KEY UPDATE Name=VALUES(Name), Company=VALUES(Company), StockTicker=VALUES(StockTicker);
+
+-- Insert filing data
+INSERT INTO Filings (CIK, SECFormType, FilingDate, FormLink)
+VALUES (1371128, '8-K', '2024-01-30', 'https://www.sec.gov/Archives/edgar/data/1371128/000149315224004328/ex99-1.htm');
