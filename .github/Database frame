@@ -1,6 +1,6 @@
 -- Create database
-CREATE DATABASE IF NOT EXISTS SEC_InsiderFilings;
-USE SEC_InsiderFilings;
+CREATE DATABASE IF NOT EXISTS SEC_DataFilings;
+USE SEC_DataFilings;
 
 -- Table for storing person's bio and identification
 CREATE TABLE IF NOT EXISTS Persons (
@@ -14,19 +14,29 @@ CREATE TABLE IF NOT EXISTS Persons (
 CREATE TABLE IF NOT EXISTS Filings (
     AccessionNo VARCHAR(255) PRIMARY KEY,
     CIK INT NOT NULL,
-    SECFormType VARCHAR(10) NULL,
-    FilingDate DATE NULL,
     StockType ENUM('Direct', 'Indirect') NULL,
     NumberOfShares BIGINT NULL,
     SharePrice DECIMAL(10, 2) NULL,
-    FormLink VARCHAR(255) NULL,
     TransactionType CHAR(1) NULL,  -- Can be 'A' or 'D' for Acquisition or Disposition, or NULL if not applicable
     FOREIGN KEY (CIK) REFERENCES Persons(CIK)
 );
-INSERT INTO Persons (CIK, Name, Company, StockTicker)
-VALUES (1371128, 'Join', 'NewHydrogen, Inc.', 'NEWH')
-ON DUPLICATE KEY UPDATE Name=VALUES(Name), Company=VALUES(Company), StockTicker=VALUES(StockTicker);
 
--- Insert filing data
-INSERT INTO Filings (CIK, SECFormType, FilingDate, FormLink)
-VALUES (1371128, '8-K', '2024-01-30', 'https://www.sec.gov/Archives/edgar/data/1371128/000149315224004328/ex99-1.htm');
+
+CREATE TABLE IF NOT EXISTS FilingLinks (
+    CIK INT,
+    name VARCHAR(255),
+    AccessionNo VARCHAR(255) UNIQUE NOT NULL,
+    SECFormType VARCHAR(10) NULL,
+    FilingDate DATE NULL,
+    Link VARCHAR(255) NOT NULL,
+    PRIMARY KEY (CIK, name),
+    FOREIGN KEY (AccessionNo) REFERENCES Filings (AccessionNo),
+    FOREIGN KEY (CIK) REFERENCES Persons (CIK)
+);
+
+SELECT * FROM Persons;
+SELECT * FROM Filings;
+SELECT * FROM FilingLinks;
+
+ALTER TABLE Filings
+ADD COLUMN TransactionCode VARCHAR(255) NULL;
