@@ -1,0 +1,42 @@
+-- Create database
+CREATE DATABASE IF NOT EXISTS SEC_DataFilings;
+USE SEC_DataFilings;
+
+-- Table for storing person's bio and identification
+CREATE TABLE IF NOT EXISTS Persons (
+    CIK INT PRIMARY KEY,
+    Name VARCHAR(255),
+    Company VARCHAR(255),
+    StockTicker VARCHAR(10)
+);
+
+-- Storing transactions and SEC filings
+CREATE TABLE IF NOT EXISTS Filings (
+    AccessionNo VARCHAR(255) PRIMARY KEY,
+    CIK INT NOT NULL,
+    StockType ENUM('Direct', 'Indirect') NULL,
+    NumberOfShares BIGINT NULL,
+    SharePrice DECIMAL(10, 2) NULL,
+    TransactionType CHAR(1) NULL,  -- Can be 'A' or 'D' for Acquisition or Disposition, or NULL if not applicable
+    FOREIGN KEY (CIK) REFERENCES Persons(CIK)
+);
+
+
+CREATE TABLE IF NOT EXISTS FilingLinks (
+    CIK INT,
+    name VARCHAR(255),
+    AccessionNo VARCHAR(255) UNIQUE NOT NULL,
+    SECFormType VARCHAR(10) NULL,
+    FilingDate DATE NULL,
+    Link VARCHAR(255) NOT NULL,
+    PRIMARY KEY (CIK, name),
+    FOREIGN KEY (AccessionNo) REFERENCES Filings (AccessionNo),
+    FOREIGN KEY (CIK) REFERENCES Persons (CIK)
+);
+
+SELECT * FROM Persons;
+SELECT * FROM Filings;
+SELECT * FROM FilingLinks;
+
+ALTER TABLE Filings
+ADD COLUMN TransactionCode VARCHAR(255) NULL;
