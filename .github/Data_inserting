@@ -1,0 +1,53 @@
+import pandas as pd
+from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
+# connecting with the MYSQL
+username = 'root'
+password = '12345678'
+host = '127.0.0.1'
+database = 'SEC_DataFilings'
+connection_string = f'mysql+pymysql://{username}:{password}@{host}/{database}'
+
+# Create an engine
+engine = create_engine(connection_string)
+# read the file
+csv_file_path = '..../sec_outputs.csv'  # Update the path ( 需要改一下path ）
+data = pd.read_csv(csv_file_path)
+
+
+data['CIK'] = data['CIK'].astype(int)
+data['Name'] = ""
+data['company'] = data['company'].str.extract(r'^(.*?) \(')  # Extract the name before ' ('
+data['StockTicker'] =  data['ticker'].fillna('N/A')
+# clearing the duplicate CIK
+data_noduplicate_cik = data.drop_duplicates(subset='CIK', keep='first')
+existing_ciks = pd.read_sql("SELECT CIK FROM Persons", con=engine)
+filtered_data_cik = data_noduplicate_cik[~data_noduplicate_cik['CIK'].isin(existing_ciks['CIK'])]
+# inserting all the cik company
+if not filtered_data_cik.empty:
+    filtered_data_cik[['CIK', 'Name', 'company', 'StockTicker']].to_sql('Persons', con=engine, index=False, if_exists='append')
+    print("New data inserted successfully.")
+else:
+    print("No new data to insert.")
+
+
+# Insert into Filings
+data['AccessionNo'] = data['accession number']
+data['CIK'] = data['CIK'].astype(int)
+data['StockType'] = data['type'].apply(lambda x: x if x in ['Direct', 'Indirect'] else None)
+data['NumberOfShares'] = None
+data['SharePrice']= None
+data['TransactionType']= None
+data['TransactionCode']= None
+
+# clearing the duplicate association number
+data_noduplicate_assno = data.drop_duplicates(subset='AccessionNo', keep='first')
+existing_accession_nos = pd.read_sql("SELECT AccessionNo FROM Filings", con=engine)['AccessionNo']
+filtered_data_assno = data_noduplicate_assno[~data_noduplicate_assno['AccessionNo'].isin(existing_accession_nos)]
+# inserting the filings table
+if not filtered_data_assno.empty:
+    filtered_data_assno[['AccessionNo', 'CIK', 'StockType', 'NumberOfShares', 'SharePrice', 'TransactionType', 'TransactionCode' ]].to_sql('Filings', con=engine, index=False, if_exists='append')
+    print("Data successfully inserted into Filings.")
+else:
+    print("No new data to insert.")
