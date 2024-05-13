@@ -21,3 +21,21 @@ def insert_data(file_path):
 
 file_path = '/Users/christy/Desktop/cik-lookup-data.txt'
 insert_data(file_path)
+
+def fetch_cik_by_name(name):
+    connection = mysql.connector.connect(
+        host='localhost',        # Your MySQL server host
+        user='root',             # Your MySQL username
+        password='12345678',     # Your MySQL password
+        database='Search_CIK'    # Your MySQL database name
+    )
+    cursor = connection.cursor()
+    query = "SELECT Name, CIK FROM CIK_Search WHERE Name LIKE %s"
+    cursor.execute(query, ('%' + name + '%',))
+    records = cursor.fetchall()
+    if records:
+        for record in records:
+            print(record[0],record[1])# Print each CIK
+    else:
+        print("Nothing find")
+    connection.close()
