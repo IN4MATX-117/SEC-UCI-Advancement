@@ -24,10 +24,10 @@ insert_data(file_path)
 
 def fetch_cik_by_name(name):
     connection = mysql.connector.connect(
-        host='localhost',        # Your MySQL server host
-        user='root',             # Your MySQL username
-        password='12345678',     # Your MySQL password
-        database='Search_CIK'    # Your MySQL database name
+        host='localhost',       
+        user='root',             
+        password='12345678',    
+        database='Search_CIK' 
     )
     cursor = connection.cursor()
     query = "SELECT Name, CIK FROM CIK_Search WHERE Name LIKE %s"
