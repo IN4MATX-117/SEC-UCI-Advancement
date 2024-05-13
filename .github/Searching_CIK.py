@@ -39,3 +39,5 @@ def fetch_cik_by_name(name):
     else:
         print("Nothing find")
     connection.close()
+
+fetch_cik_by_name(name)
