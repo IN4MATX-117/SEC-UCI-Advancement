@@ -1,3 +1,5 @@
+# query for inserting all the people's name and CIK from SCE 
+
 import mysql.connector
 def process_file(file_path):
     with open(file_path, 'r', encoding='latin-1') as file:  # Adjusting encoding here
