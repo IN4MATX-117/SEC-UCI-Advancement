@@ -1,4 +1,5 @@
 # query for inserting all the people's name and CIK from SCE 
+# output: CIK_Search.csv
 
 import mysql.connector
 def process_file(file_path):
