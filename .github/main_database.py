@@ -1,6 +1,7 @@
 # getting the UCI Alumni name, company cik, bio, link from full_name.csv file 
 # query for finding the UCI Alumni perosnal cik via Searching_CIK, 
 # and storing the personal cik, name, bio, def_14A link into the Database_schema. 
+# database: Database_schema
 # output: Persons.csv, FilingLinks.csv
 
 import mysql.connector
